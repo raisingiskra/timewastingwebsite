@@ -67,7 +67,6 @@
     background-color: rgba(0,0,0,0.5);
     z-index: 500;
   }
-  /* Cat memes */
   .catMeme {
     position: absolute;
     width: 80px;
@@ -102,26 +101,6 @@
   // ==== Countdown Timer ====
   const releaseDate = new Date("2026-06-30 12:30:00").getTime();
 
-  function updateCountdown() {
-    const now = new Date().getTime();
-    const distance = releaseDate - now;
-
-    if (distance < 0) {
-      document.getElementById("countdown").textContent = "🎉 The website is live! 🎉";
-      return;
-    }
-
-    const days = Math.floor(distance / (1000*60*60*24));
-    const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
-    const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
-    const seconds = Math.floor((distance % (1000*60)) / 1000);
-
-    document.getElementById("countdown").textContent = 
-      `⏳ Launch in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
-
   // ==== Fun Messages ====
   const messages = [
     "Microwave popcorn in progress 🍿",
@@ -139,18 +118,39 @@
     "Feeding the virtual cat 🐱",
     "Tickling the code elves 🧝‍♂️",
     "Dancing with CSS magic 💃",
-    "Pretending i know what i'm doing 🤯"
-    "Taking care of my Tamagotchi ✨"
+    "Pretending I know what I'm doing 🤯",
+    "Taking care of my Tamagotchi ✨",
     "Catching 'em all 🐦‍⬛🐅🐬"
   ];
   let msgIndex = 0;
 
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = releaseDate - now;
+
+    const countdownEl = document.getElementById("countdown");
+
+    if (distance < 0) {
+      countdownEl.textContent = "🎉 The website is live! 🎉";
+      return;
+    }
+
+    const days = Math.floor(distance / (1000*60*60*24));
+    const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+    const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+    const seconds = Math.floor((distance % (1000*60)) / 1000);
+
+    const countdownText = `⏳ Launch in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    countdownEl.textContent = countdownText + " — " + messages[msgIndex];
+  }
+
+  setInterval(updateCountdown, 1000);
+
+  // Update message every minute
   function updateMessage() {
-    document.getElementById("countdown").textContent = messages[msgIndex];
     msgIndex = (msgIndex + 1) % messages.length;
   }
-  setInterval(updateMessage, 60000); // every minute
-  updateMessage();
+  setInterval(updateMessage, 60000);
 
   // ==== Loading bar animation ====
   let fillWidth = 0;
@@ -174,7 +174,7 @@
   }
   function checkAdminPassword() {
     const password = document.getElementById('adminPassword').value;
-    const correctPassword = "EnterIfYouDare"; !
+    const correctPassword = "EnterIfYouDare";
     if (password === correctPassword) {
       window.location.href = "homepage.html";
     } else {
@@ -183,7 +183,7 @@
   }
   document.getElementById('overlay').onclick = closeAdminPopup;
 
-  
+  // ==== Cat Memes ====
   const catImages = [
     "https://cataas.com/cat/cute/says/Meow",
     "https://cataas.com/cat/cute/says/Hi",
@@ -198,12 +198,12 @@
     img.style.top = Math.random()*80 + "%";
     img.style.left = Math.random()*90 + "%";
     document.body.appendChild(img);
-
-   
     setTimeout(() => { img.remove(); }, 10000);
   }
-
   setInterval(spawnCatMeme, 15000);
+
+  // Initial call to show countdown immediately
+  updateCountdown();
 </script>
 
 </body>
