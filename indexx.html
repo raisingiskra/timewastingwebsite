@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Time Wasting Website</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      background-color: #f9f9f9;
+    }
+    #countdown {
+      font-size: 1.8em;
+      margin-bottom: 30px;
+      min-height: 60px; /* prevent jumping text */
+    }
+    #loadingBar {
+      height: 20px;
+      width: 80%;
+      background-color: #ddd;
+      margin: 0 auto 30px auto;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #loadingFill {
+      height: 100%;
+      width: 0;
+      background-color: #4caf50;
+      transition: width 1s linear;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    /* Hidden admin popup styles */
+    #adminPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 30px;
+      border: 2px solid #333;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+    #adminPopup input[type="password"] {
+      padding: 10px;
+      font-size: 1em;
+      width: 200px;
+    }
+    #adminPopup button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      font-size: 1em;
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 500;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Time Wasting Website</h1>
+<div id="countdown">Loading…</div>
+<div id="loadingBar"><div id="loadingFill"></div></div>
+<button onclick="showAdminPopup()">Admin Access</button>
+
+<div id="overlay"></div>
+
+<div id="adminPopup">
+  <h3>Admin Login</h3>
+  <input type="password" id="adminPassword" placeholder="Enter password">
+  <br>
+  <button onclick="checkAdminPassword()">Submit</button>
+  <button onclick="closeAdminPopup()">Cancel</button>
+</div>
+
+<script>
+  // ==== Creative Messages ====
+  const messages = [
+    "Microwave popcorn in progress, check back later.",
+    "Polishing the pixels… almost ready!",
+    "Charging up your time-wasting experience…",
+    "Mixing memes and code…",
+    "Adjusting the flux capacitor…",
+    "Brewing virtual coffee… website coming soon!",
+    "Counting invisible pixels…",
+    "Summoning the internet gremlins…",
+    "Sharpening digital pencils…",
+    "Warming up the hamster powering our server…",
+    "Calibrating nonsense generators…",
+    "Loading infinite fun… please wait…",
+    "Feeding the virtual cat… it’s important!",
+    "Tickling the code elves… almost done!"
+  ];
+
+  let msgIndex = 0;
+
+  function updateMessage() {
+    document.getElementById("countdown").textContent = messages[msgIndex];
+    msgIndex = (msgIndex + 1) % messages.length;
+  }
+
+  // change message every 60 seconds
+  setInterval(updateMessage, 60000);
+  updateMessage(); // initial call
+
+  // ==== Loading bar animation ====
+  let fillWidth = 0;
+  function animateLoadingBar() {
+    fillWidth += 1;
+    if (fillWidth > 100) fillWidth = 0; // reset for infinite loop
+    document.getElementById("loadingFill").style.width = fillWidth + "%";
+  }
+  setInterval(animateLoadingBar, 600); // smooth loading animation
+
+  // ==== Admin Popup Functions ====
+  function showAdminPopup() {
+    document.getElementById('adminPopup').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('adminPassword').focus();
+  }
+
+  function closeAdminPopup() {
+    document.getElementById('adminPopup').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('adminPassword').value = '';
+  }
+
+  function checkAdminPassword() {
+    const password = document.getElementById('adminPassword').value;
+    const correctPassword = "letmein123"; // change this!
+
+    if (password === correctPassword) {
+      window.location.href = "homepage.html";
+    } else {
+      alert("Wrong password!");
+    }
+  }
+
+  document.getElementById('overlay').onclick = closeAdminPopup;
+</script>
+
+</body>
+</html>
