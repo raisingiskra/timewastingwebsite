@@ -121,6 +121,8 @@
     "Pretending I know what I'm doing 🤯",
     "Taking care of my Tamagotchi ✨",
     "Catching 'em all 🐦‍⬛🐅🐬"
+    "Playing Sandboxels 💫"
+    "Eating time and space 🪐"
   ];
   let msgIndex = 0;
 
@@ -131,7 +133,7 @@
     const countdownEl = document.getElementById("countdown");
 
     if (distance < 0) {
-      countdownEl.textContent = "🎉 The website is live! 🎉";
+      countdownEl.textContent = "🎉 The website is live! And it's my birthday! :) 🎉";
       return;
     }
 
@@ -140,7 +142,7 @@
     const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
     const seconds = Math.floor((distance % (1000*60)) / 1000);
 
-    const countdownText = `⏳ Launch in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    const countdownText = `Website releases in.. ${days}d ${hours}h ${minutes}m ${seconds}s`;
     countdownEl.textContent = countdownText + " — " + messages[msgIndex];
   }
 
@@ -150,7 +152,7 @@
   function updateMessage() {
     msgIndex = (msgIndex + 1) % messages.length;
   }
-  setInterval(updateMessage, 5000);
+  setInterval(updateMessage, 10000);
 
   // ==== Loading bar animation ====
   let fillWidth = 0;
@@ -159,7 +161,7 @@
     if (fillWidth > 100) fillWidth = 0;
     document.getElementById("loadingFill").style.width = fillWidth + "%";
   }
-  setInterval(animateLoadingBar, 50);
+  setInterval(animateLoadingBar, 100);
 
   // ==== Admin Popup Functions ====
   function showAdminPopup() {
@@ -174,11 +176,11 @@
   }
   function checkAdminPassword() {
     const password = document.getElementById('adminPassword').value;
-    const correctPassword = "EnterIfYouDare";
+    const correctPassword = "Waitwhatidkhuh";
     if (password === correctPassword) {
       window.location.href = "homepage.html";
     } else {
-      alert("Wrong password!");
+      alert("Nuh uh! Nice try.");
     }
   }
   document.getElementById('overlay').onclick = closeAdminPopup;
