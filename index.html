@@ -150,7 +150,7 @@
   function updateMessage() {
     msgIndex = (msgIndex + 1) % messages.length;
   }
-  setInterval(updateMessage, 60000);
+  setInterval(updateMessage, 5000);
 
   // ==== Loading bar animation ====
   let fillWidth = 0;
@@ -159,7 +159,7 @@
     if (fillWidth > 100) fillWidth = 0;
     document.getElementById("loadingFill").style.width = fillWidth + "%";
   }
-  setInterval(animateLoadingBar, 600);
+  setInterval(animateLoadingBar, 50);
 
   // ==== Admin Popup Functions ====
   function showAdminPopup() {
