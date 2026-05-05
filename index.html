@@ -45,5 +45,66 @@
   <p>Oh yeah, make sure to NOT click the ditto up there. He's keeping the div up.</p>
   <p class="warning">⚠️ Warning: Make sure to watch out for malware. ⚠️</p>
   </div>
+  <script>
+const ditto = document.querySelector('.ditto');
+
+// Save initial position
+let startTop = ditto.getBoundingClientRect().top;
+let startLeft = ditto.getBoundingClientRect().left;
+
+ditto.addEventListener('click', () => {
+  let top = startTop;
+  const fallDistance = window.innerHeight - 100;
+  const fallSpeed = 4;
+
+  // Swing variables
+  let angle = 0;
+  let swingSpeed = 0.1;
+  let swingDirection = 1;
+
+  // Create popup
+  const popup = document.createElement('div');
+  popup.textContent = "Hey! Look what you did :( Put him back!!";
+  popup.style.position = 'fixed';
+  popup.style.top = '40%';
+  popup.style.left = '50%';
+  popup.style.transform = 'translate(-50%, -50%)';
+  popup.style.backgroundColor = '#FFCB77';
+  popup.style.border = '4px solid #FE6D73';
+  popup.style.padding = '20px';
+  popup.style.fontFamily = '"Courier New", monospace';
+  popup.style.fontSize = '20px';
+  popup.style.textAlign = 'center';
+  popup.style.cursor = 'pointer';
+  document.body.appendChild(popup);
+
+  function fallAndSwing() {
+    if (top < fallDistance) {
+      top += fallSpeed;
+      ditto.style.top = top + 'px';
+
+      // Swing side to side
+      angle += swingSpeed * swingDirection;
+      if (angle > 15 || angle < -15) swingDirection *= -1;
+      ditto.style.transform = `rotate(${angle}deg)`;
+
+      requestAnimationFrame(fallAndSwing);
+    } else {
+      ditto.style.top = fallDistance + 'px';
+      ditto.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  fallAndSwing();
+
+  // When popup clicked, reset Ditto
+  popup.addEventListener('click', () => {
+    ditto.style.top = startTop + 'px';
+    ditto.style.left = startLeft + 'px';
+    ditto.style.transform = 'rotate(0deg)';
+    document.body.removeChild(popup);
+  });
+});
+</script>
 </body>
 </html>
