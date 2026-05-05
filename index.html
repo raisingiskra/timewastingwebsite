@@ -76,6 +76,8 @@ ditto.addEventListener('click', () => {
   popup.style.fontSize = '20px';
   popup.style.textAlign = 'center';
   popup.style.cursor = 'pointer';
+  popup.style.boxShadow = '0 8px 20px rgba(0,0,0,0.5)'; // subtle shadow to lift it
+  popup.style.zIndex = 9999; // make sure it's on top
   document.body.appendChild(popup);
 
   function fallAndSwing() {
