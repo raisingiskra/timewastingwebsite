@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ditto's Smoothie Maker</title>
+<link rel="icon" type="image/x-icon" href="favicon.png">
+<style>
+  body { font-family: "Courier New", monospace; background: #264653; color: #FFF; text-align:center; padding:20px; overflow-x:hidden; }
+  #ingredients { position: relative; height: 350px; margin-bottom: 20px; }
+  .ingredient { position: absolute; padding:10px 20px; background:#FFCB77; border:2px solid #FE6D73; border-radius:8px; cursor:pointer; user-select:none; transition: transform 0.2s; }
+  #blendButton { padding:10px 30px; font-size:20px; background:#17C3B2; border:none; border-radius:10px; cursor:pointer; }
+  #result { margin-top:30px; font-size:22px; }
+  #ditto { width:100px; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); transition: transform 0.2s; }
+</style>
+</head>
+<body>
+<h1>🍹 Ditto's Smoothie Maker 🍹</h1>
+<p>Click ingredients to toss them in, then hit Blend! Chaos, yummy, and normal points will decide Ditto’s reaction!</p>
+
+<div id="ingredients"></div>
+<button id="blendButton">Blend it! 🌀</button>
+<div id="result"></div>
+<img id="ditto" src="https://img.pokemondb.net/sprites/sword-shield/normal/ditto.png" alt="Ditto">
+
+<script>
+const ingredientList = [
+  {name:"bacon", chaos:0, yummy:10, normal:0},
+  {name:"fruits", chaos:0, yummy:0, normal:10},
+  {name:"cheese", chaos:0, yummy:5, normal:5},
+  {name:"a ditto", chaos:5, yummy:0, normal:5},
+  {name:"sandwich", chaos:0, yummy:5, normal:5},
+  {name:"someone’s water bottle", chaos:10, yummy:0, normal:0},
+  {name:"turtle", chaos:10, yummy:0, normal:0},
+  {name:"pants", chaos:10, yummy:0, normal:0},
+  {name:"car tire", chaos:10, yummy:0, normal:0},
+  {name:"coconut milk", chaos:0, yummy:0, normal:10},
+  {name:"pudding", chaos:0, yummy:5, normal:5},
+  {name:"vanilla extract", chaos:0, yummy:5, normal:5},
+  {name:"cream", chaos:0, yummy:5, normal:5},
+  {name:"broccoli", chaos:0, yummy:0, normal:10},
+  {name:"eggs", chaos:0, yummy:5, normal:5},
+  {name:"water", chaos:0, yummy:0, normal:10},
+  {name:"clouds", chaos:10, yummy:0, normal:0},
+  {name:"jewels", chaos:5, yummy:0, normal:5},
+  {name:"stone", chaos:10, yummy:0, normal:0},
+  {name:"spoon", chaos:0, yummy:0, normal:5},
+  {name:"rubber duck", chaos:5, yummy:0, normal:0},
+  {name:"shoelace", chaos:10, yummy:0, normal:0},
+  {name:"glitter", chaos:5, yummy:0, normal:0},
+  {name:"soda", chaos:0, yummy:5, normal:5},
+  {name:"lava", chaos:10, yummy:0, normal:0},
+  {name:"rubber band", chaos:5, yummy:0, normal:0},
+  {name:"notebook", chaos:10, yummy:0, normal:0},
+  {name:"pancake", chaos:0, yummy:5, normal:5},
+  {name:"candle", chaos:5, yummy:0, normal:0},
+  {name:"leaf", chaos:0, yummy:0, normal:5},
+  {name:"snowball", chaos:5, yummy:0, normal:0},
+  {name:"honey", chaos:0, yummy:5, normal:5},
+  {name:"ketchup", chaos:0, yummy:5, normal:5},
+  {name:"magic dust", chaos:10, yummy:0, normal:0},
+  {name:"tiny chair", chaos:10, yummy:0, normal:0},
+  {name:"marshmallow", chaos:0, yummy:5, normal:5},
+  {name:"magnet", chaos:5, yummy:0, normal:0},
+  {name:"teabag", chaos:0, yummy:5, normal:5},
+  {name:"sock", chaos:5, yummy:0, normal:0}
+];
+
+const ingredientsDiv = document.getElementById('ingredients');
+const resultDiv = document.getElementById('result');
+const blendButton = document.getElementById('blendButton');
+const dittoImg = document.getElementById('ditto');
+
+let selectedIngredients = [];
+
+ingredientList.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'ingredient';
+  div.textContent = item.name;
+  div.style.left = Math.random()*80+'vw';
+  div.style.top = Math.random()*250+'px';
+  ingredientsDiv.appendChild(div);
+
+  div.addEventListener('click', () => {
+    selectedIngredients.push(item);
+    div.style.transition = 'all 1s ease-in';
+    div.style.left='50%';
+    div.style.top='300px';
+    div.style.transform='translateX(-50%) scale(0.5)';
+  });
+});
+
+blendButton.addEventListener('click', () => {
+  if(selectedIngredients.length===0){
+    resultDiv.textContent="Ditto says: Pick something first! 😅";
+    return;
+  }
+
+  dittoImg.style.transform='translateX(-50%) rotate(720deg)';
+
+  setTimeout(()=>{
+    let chaos=0, yummy=0, normal=0;
+    selectedIngredients.forEach(i=>{ chaos+=i.chaos; yummy+=i.yummy; normal+=i.normal; });
+
+    let total=chaos+yummy+normal;
+    let chaosPercent=(chaos/total)*100;
+    let yummyPercent=(yummy/total)*100;
+    let normalPercent=(normal/total)*100;
+
+    let message="";
+    if(chaosPercent>50) message="😱 Ditto says: This is too crazy!";
+    else if(yummyPercent>=50) message="😋 Ditto says: Weird but tasty!";
+    else if(normalPercent>=50) message="😎 Ditto says: Perfectly delicious!";
+    else message="😏 Ditto says: Huh, what even is this?";
+
+    const smoothie = selectedIngredients.map(i=>i.name).join(" + ");
+    resultDiv.innerHTML=`✨ Your smoothie: ${smoothie} ✨<br>${message}<br>💥 Chaos:${chaos}, 🍴 Yummy:${yummy}, 🍓 Normal:${normal}`;
+
+    dittoImg.style.transform='translateX(-50%) rotate(0deg)';
+
+    const allIngredients=document.querySelectorAll('.ingredient');
+    allIngredients.forEach(div=>{
+      div.style.transition='all 0.5s';
+      div.style.left=Math.random()*80+'vw';
+      div.style.top=Math.random()*250+'px';
+      div.style.transform='translateX(0) scale(1)';
+    });
+
+    selectedIngredients=[];
+  },1000);
+});
+</script>
+</body>
+</html>
