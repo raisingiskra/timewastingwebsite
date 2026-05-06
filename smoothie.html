@@ -6,7 +6,6 @@
 <title>Ditto's Smoothie Maker</title>
 <link rel="icon" type="image/x-icon" href="favicon.png">
 <style>
-  /* Palette */
   :root {
     --border1: #17C3B2;
     --border2: #F4A261;
@@ -68,7 +67,7 @@
 
   #blendButton {
     position: fixed;
-    bottom: 40px;
+    bottom: 60px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 30px;
@@ -81,9 +80,7 @@
     color: #000;
   }
 
-  #blendButton:hover {
-    background: var(--border2);
-  }
+  #blendButton:hover { background: var(--border2); }
 
   #result {
     margin-top: 30px;
@@ -91,27 +88,27 @@
     text-align: center;
   }
 
-#ditto {
-    width: 300px;               /* bigger Ditto */
+  #ditto {
+    width: 300px;
     position: fixed;
-    bottom: 300px;              /* higher on screen */
+    bottom: 300px;
     left: 50%;
-    z-index: 2000;              /* top star */
-}
+    transform: translateX(-50%);
+    z-index: 2000;
+  }
 
+  /* only spins when .blending is added */
   #ditto.blending {
     animation-name: spinDitto;
-    animation-duration: 2s;      /* one full spin takes 2 seconds */
+    animation-duration: 2s;
     animation-iteration-count: 5; /* spins 5 times */
     animation-timing-function: linear;
   }
 
   @keyframes spinDitto {
-  0%   { transform: translateX(-50%) rotate(0deg); }
-  100% { transform: translateX(-50%) rotate(360deg); }
-}
-
-
+    0%   { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
+  }
 
   .flyingIngredient {
     position: absolute;
@@ -149,32 +146,7 @@ const ingredientList = [
   {name:"pudding", chaos:0, yummy:5, normal:5},
   {name:"vanilla extract", chaos:0, yummy:5, normal:5},
   {name:"cream", chaos:0, yummy:5, normal:5},
-  {name:"broccoli", chaos:0, yummy:0, normal:10},
-  {name:"eggs", chaos:0, yummy:5, normal:5},
-  {name:"water", chaos:0, yummy:0, normal:10},
-  {name:"clouds", chaos:10, yummy:0, normal:0},
-  {name:"jewels", chaos:5, yummy:0, normal:5},
-  {name:"stone", chaos:10, yummy:0, normal:0},
-  {name:"spoon", chaos:0, yummy:0, normal:5},
-  {name:"rubber duck", chaos:5, yummy:0, normal:0},
-  {name:"shoelace", chaos:10, yummy:0, normal:0},
-  {name:"glitter", chaos:5, yummy:0, normal:0},
-  {name:"soda", chaos:0, yummy:5, normal:5},
-  {name:"lava", chaos:10, yummy:0, normal:0},
-  {name:"rubber band", chaos:5, yummy:0, normal:0},
-  {name:"notebook", chaos:10, yummy:0, normal:0},
-  {name:"pancake", chaos:0, yummy:5, normal:5},
-  {name:"candle", chaos:5, yummy:0, normal:0},
-  {name:"leaf", chaos:0, yummy:0, normal:5},
-  {name:"snowball", chaos:5, yummy:0, normal:0},
-  {name:"honey", chaos:0, yummy:5, normal:5},
-  {name:"ketchup", chaos:0, yummy:5, normal:5},
-  {name:"magic dust", chaos:10, yummy:0, normal:0},
-  {name:"tiny chair", chaos:10, yummy:0, normal:0},
-  {name:"marshmallow", chaos:0, yummy:5, normal:5},
-  {name:"magnet", chaos:5, yummy:0, normal:0},
-  {name:"teabag", chaos:0, yummy:5, normal:5},
-  {name:"sock", chaos:5, yummy:0, normal:0}
+  {name:"broccoli", chaos:0, yummy:0, normal:10}
 ];
 
 const ingredientsRow = document.getElementById('ingredientsRow');
@@ -184,7 +156,7 @@ const dittoImg = document.getElementById('ditto');
 
 let selectedIngredients = [];
 
-// Create buttons in fixed row
+// Create ingredient buttons
 ingredientList.forEach(item => {
   const btn = document.createElement('button');
   btn.textContent = item.name;
@@ -193,7 +165,7 @@ ingredientList.forEach(item => {
   btn.addEventListener('click', () => {
     selectedIngredients.push(item);
 
-    // Fly to Ditto
+    // Fly animation
     const flyDiv = document.createElement('div');
     flyDiv.className = 'flyingIngredient';
     flyDiv.textContent = item.name;
@@ -216,16 +188,17 @@ ingredientList.forEach(item => {
 
 // Blend button
 blendButton.addEventListener('click', () => {
-  if(selectedIngredients.length===0){
-    resultDiv.textContent="Ditto says: Pick something first! 😅";
+  if(selectedIngredients.length === 0){
+    resultDiv.textContent = "Ditto says: Pick something first! 😅";
     return;
   }
 
-  dittoImg.classList.add('blending');
+  dittoImg.classList.add('blending'); // start spinning
 
-  setTimeout(()=>{
-    dittoImg.classList.remove('blending');
+  setTimeout(() => {
+    dittoImg.classList.remove('blending'); // stop after 5 spins
 
+    // Score calculation
     let chaos=0, yummy=0, normal=0;
     selectedIngredients.forEach(i=>{ chaos+=i.chaos; yummy+=i.yummy; normal+=i.normal; });
 
@@ -243,8 +216,8 @@ blendButton.addEventListener('click', () => {
     const smoothie = selectedIngredients.map(i=>i.name).join(" + ");
     resultDiv.innerHTML=`✨ Your smoothie: ${smoothie} ✨<br>${message}<br>💥 Chaos:${chaos}, 🍴 Yummy:${yummy}, 🍓 Normal:${normal}`;
 
-    selectedIngredients=[];
-  },3000);  // match the aggressive spin duration
+    selectedIngredients = [];
+  }, 2*5*1000); // 2s * 5 spins = 10s
 });
 </script>
 </body>
