@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ditto Tamagotchi</title>
+  <style>
+    /* ---------- Internal CSS ---------- */
+    body {
+      font-family: "Courier New", monospace;
+      text-align: center;
+      background-color: #264653;
+      color: #FFCB77;
+      padding: 50px;
+    }
+
+    #ditto-container {
+      margin: 40px 0;
+    }
+
+    #ditto {
+      width: 128px;
+      height: 128px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #17C3B2;
+      color: #264653;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #FE6D73;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🟣 Take Care of Ditto!</h1>
+
+  <div id="ditto-container">
+    <img id="ditto" src="neutral.png" alt="Ditto Tamagotchi">
+  </div>
+
+  <div id="buttons">
+    <button id="feed-btn">Feed 🍎</button>
+    <button id="play-btn">Play 🎾</button>
+    <button id="duplicate-btn">Duplicate ✨</button>
+  </div>
+
+  <script>
+    /* ---------- Internal JS ---------- */
+    let dittoState = {
+      mood: "neutral",       // "neutral", "eating", "happy", "sad", "duplicate"
+      hunger: 100,           // 0–100
+      playfulness: 100,      // 0–100
+      lastInteraction: Date.now()
+    };
+
+    const dittoImg = document.getElementById('ditto');
+    let frameToggle = false; // For eating animation
+    let currentDuplicateFrame = 0;
+    const duplicateFrames = ['duplicate1.png', 'duplicate2.png', 'duplicate3.png'];
+
+    function updateDittoSprite() {
+      if (dittoState.mood === "neutral") {
+        dittoImg.src = 'neutral.png';
+      } else if (dittoState.mood === "eating") {
+        dittoImg.src = frameToggle ? 'mouth_open.png' : 'mouth_closed.png';
+      } else if (dittoState.mood === "happy") {
+        dittoImg.src = 'happy.png';
+      } else if (dittoState.mood === "sad") {
+        dittoImg.src = 'sad.png';
+      } else if (dittoState.mood === "duplicate") {
+        dittoImg.src = duplicateFrames[currentDuplicateFrame];
+      }
+    }
+
+    // ---------- Player Actions ----------
+    document.getElementById('feed-btn').addEventListener('click', () => {
+      dittoState.hunger = Math.min(100, dittoState.hunger + 30);
+      dittoState.mood = "eating";
+      frameToggle = true;
+    });
+
+    document.getElementById('play-btn').addEventListener('click', () => {
+      dittoState.playfulness = Math.min(100, dittoState.playfulness + 30);
+      dittoState.mood = "happy";
+    });
+
+    document.getElementById('duplicate-btn').addEventListener('click', () => {
+      dittoState.mood = "duplicate";
+      currentDuplicateFrame = 0;
+      let dupInterval = setInterval(() => {
+        currentDuplicateFrame++;
+        if (currentDuplicateFrame >= duplicateFrames.length) {
+          clearInterval(dupInterval);
+          dittoState.mood = "neutral";
+          currentDuplicateFrame = 0;
+        }
+      }, 500);
+    });
+
+    // ---------- Notifications ----------
+    function notify(message) {
+      const popup = document.createElement('div');
+      popup.textContent = message;
+      popup.classList.add('notification');
+      document.body.appendChild(popup);
+      setTimeout(() => document.body.removeChild(popup), 3000);
+    }
+
+    // ---------- Stat Decay ----------
+    function decayStats() {
+      const now = Date.now();
+      const delta = (now - dittoState.lastInteraction) / 1000; // seconds
+
+      dittoState.hunger = Math.max(0, dittoState.hunger - delta * 0.02);
+      dittoState.playfulness = Math.max(0, dittoState.playfulness - delta * 0.01);
+
+      if (dittoState.hunger < 30 || dittoState.playfulness < 30) {
+        dittoState.mood = "sad";
+        if (dittoState.hunger < 30) notify("Ditto is hungry! Feed him!");
+        if (dittoState.playfulness < 30) notify("Ditto is bored! Play with him!");
+      } else if (dittoState.mood === "eating" || dittoState.mood === "happy") {
+        // keep mood
+      } else {
+        dittoState.mood = "neutral";
+      }
+
+      dittoState.lastInteraction = now;
+      updateDittoSprite();
+    }
+
+    // ---------- Main Loop ----------
+    setInterval(() => {
+      frameToggle = !frameToggle;
+      decayStats();
+    }, 500);
+
+    // Initial render
+    updateDittoSprite();
+  </script>
+
+</body>
+</html>
