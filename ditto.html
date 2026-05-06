@@ -144,6 +144,12 @@ function notify(message) {
   setTimeout(() => document.body.removeChild(popup), 3000);
 }
 
+  if (dittoState.hunger < 50) {
+  notify("I could eat everything in the fridge :3");
+}
+if (dittoState.playfulness < 50) {
+  notify("Play with me… or I sulk :/");
+}
 // ---------- Player Actions ----------
 document.getElementById('feed-btn').addEventListener('click', () => {
   dittoState.hunger = Math.min(100, dittoState.hunger + 30);
@@ -198,11 +204,11 @@ function decayStats() {
 
 // ---------- Random Ditto Messages Loop ----------
 setInterval(() => {
-  if (Math.random() < 0.3) { // 30% chance every 10 seconds
+  if (Math.random() < 0.7) { // 70% chance every 10 seconds
     const msg = dittoMessages[Math.floor(Math.random() * dittoMessages.length)];
     notify(msg);
   }
-}, 10000);
+}, 5000);
 
 // ---------- Main Loop ----------
 setInterval(() => {
