@@ -91,28 +91,24 @@
     text-align: center;
   }
 
-  #ditto {
-    width: 300px;               /* bigger */
+#ditto {
+    width: 300px;               /* bigger Ditto */
     position: fixed;
-    bottom: 300px;              /* higher */
+    bottom: 300px;              /* higher on screen */
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 2000;              /* Ditto is top star */
-    transition: transform 0.3s;
-  }
+    z-index: 2000;              /* top star */
+    animation-name: spinDitto;
+    animation-duration: 2s;      /* one full spin takes 2 seconds */
+    animation-iteration-count: 5; /* spins 5 times */
+    animation-timing-function: linear;
+}
 
-  /* Aggressive spin while blending */
-  @keyframes dittoBlend {
-    0% { transform: translateX(-50%) rotate(0deg) scale(1); }
-    25% { transform: translateX(-50%) rotate(180deg) scale(1.2); }
-    50% { transform: translateX(-50%) rotate(360deg) scale(1.1); }
-    75% { transform: translateX(-50%) rotate(540deg) scale(1.2); }
-    100% { transform: translateX(-50%) rotate(720deg) scale(1); }
-  }
+@keyframes spinDitto {
+  0%   { transform: translateX(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(360deg); }
+}
 
-  #ditto.blending {
-    animation: dittoBlend 3s ease-in-out; /* slower dramatic spin */
-  }
+
 
   .flyingIngredient {
     position: absolute;
