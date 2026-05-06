@@ -1,129 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="favicon.png">
-  <title>Time Waster 2.0 </title>
+  <title>Time Waster 2.0</title>
   <style>
-    /* Define palette as CSS variables */
-:root {
-  --border1: #17C3B2;      /* turquoise */
-  --border2: #F4A261;      /* orange */
-  --border3: #FE6D73;      /* red/pink */
-  --div-color: #FFCB77;    /* warm yellow */
-  --bg-color: #264653;     /* dark blue */
-}
+    /* Palette */
+    :root {
+      --border1: #17C3B2;
+      --border2: #F4A261;
+      --border3: #FE6D73;
+      --div-color: #FFCB77;
+      --bg-color: #264653;
+    }
+
     body {
-      font-family:"Courier New", monospace; 
-      font-size:20px;
-      background-color:var(--bg-color);
+      font-family: "Courier New", monospace;
+      font-size: 20px;
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 0;
     }
- 
+
     .title {
-      border:6px solid var(--border3);
-      background-color:var(--div-color);
-      text-align:center; 
-    }
-    .warning {
-      color:red;
-      font-weight:bold;
-    }
-    .ditto {
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    }
-    .dittogame {
-      position:fixed;
       border: 6px solid var(--border3);
-      text-align:center;
-      background-color:var(--div-color);
-      top:350px;
-      left:50px;
-      padding:10px;
-      height:80px;
+      background-color: var(--div-color);
+      text-align: center;
+      padding: 20px;
     }
+
+    .warning {
+      color: red;
+      font-weight: bold;
+    }
+
+    .ditto {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .dittogame {
+      position: fixed;
+      top: 350px;
+      left: 50px;
+      border: 6px solid var(--border3);
+      background-color: var(--div-color);
+      text-align: center;
+      padding: 10px;
+    }
+
     .purple {
-    text-decoration:none;
+      text-decoration: none;
+      color: inherit;
     }
   </style>
 </head>
 <body>
   <div class="ditto">
-  <img src="https://img.pokemondb.net/sprites/sword-shield/normal/ditto.png" alt="Ditto">
+    <img src="https://img.pokemondb.net/sprites/sword-shield/normal/ditto.png" alt="Ditto">
   </div>
-    <div class="title">
-  <h1>✨ Welcome to Time Waster 2.0 ✨</h1>
-  <p>A website just interesting enough to keep you here.</p>
-  <p>Have fun exploring the true internet rabbit hole that this website is. 🙃</p>
-  <p>Oh yeah, make sure to NOT click the ditto up there. He's keeping the div up.</p>
-  <p class="warning">⚠️ Warning: Keep a clock with you at all times. Too many fun time wasting things here. ⚠️</p>
-  </div>
+
+  <header class="title">
+    <h1>✨ Welcome to Time Waster 2.0 ✨</h1>
+    <p>A website just interesting enough to keep you here.</p>
+    <p>Have fun exploring the true internet rabbit hole that this website is. 🙃</p>
+    <p>Oh yeah, make sure to NOT click the ditto up there. He's keeping the div up.</p>
+    <p class="warning">⚠️ Warning: Keep a clock with you at all times. Too many fun time wasting things here. ⚠️</p>
+  </header>
+
   <div class="dittogame">
-    <a class="purple" href="ditto.html">
-    <p>💜 Take care of your very own pet Ditto! ✨</p></a>
+    <a class="purple" href="ditto.html">💜 Take care of your very own pet Ditto! ✨</a>
   </div>
+
   <script>
-const ditto = document.querySelector('.ditto');
+    const ditto = document.querySelector('.ditto');
+    const startTop = ditto.offsetTop;
+    const startLeft = ditto.offsetLeft;
 
-// Save initial position
-let startTop = ditto.getBoundingClientRect().top;
-let startLeft = ditto.getBoundingClientRect().left;
+    // Idle wobble
+    let idleAngle = 0;
+    let idleDirection = 1;
+    const idleSpeed = 0.05;
+    const idleMaxAngle = 5;
 
-ditto.addEventListener('click', () => {
-  let top = startTop;
-  const fallDistance = window.innerHeight - 100;
-  const fallSpeed = 4;
+    function idleWobble() {
+      idleAngle += idleSpeed * idleDirection;
+      if (idleAngle > idleMaxAngle || idleAngle < -idleMaxAngle) idleDirection *= -1;
 
-  // Swing variables
-  let angle = 0;
-  let swingSpeed = 0.1;
-  let swingDirection = 1;
+      if (!ditto.classList.contains('falling')) {
+        ditto.style.transform = `translateX(-50%) rotate(${idleAngle}deg)`;
+      }
 
-  // Create popup
-  const popup = document.createElement('div');
-  popup.textContent = "Hey! Look what you did :( Put him back!!";
-  popup.style.position = 'fixed';
-  popup.style.top = '35%';
-  popup.style.left = '50%';
-  popup.style.transform = 'translate(-50%, -50%)';
-  popup.style.backgroundColor = '#FFCB77';
-  popup.style.border = '4px solid #FE6D73';
-  popup.style.padding = '20px';
-  popup.style.fontFamily = '"Courier New", monospace';
-  popup.style.fontSize = '20px';
-  popup.style.textAlign = 'center';
-  popup.style.cursor = 'pointer';
-  popup.style.boxShadow = '0 8px 20px rgba(0,0,0,0.5)'; // subtle shadow to lift it
-  popup.style.zIndex = 9999; // make sure it's on top
-  document.body.appendChild(popup);
-
-  function fallAndSwing() {
-    if (top < fallDistance) {
-      top += fallSpeed;
-      ditto.style.top = top + 'px';
-
-      // Swing side to side
-      angle += swingSpeed * swingDirection;
-      if (angle > 15 || angle < -15) swingDirection *= -1;
-      ditto.style.transform = `rotate(${angle}deg)`;
-
-      requestAnimationFrame(fallAndSwing);
-    } else {
-      ditto.style.top = fallDistance + 'px';
-      ditto.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+      requestAnimationFrame(idleWobble);
     }
-  }
+    idleWobble();
 
-  fallAndSwing();
+    // Click to fall and bounce
+    ditto.addEventListener('click', () => {
+      ditto.classList.add('falling');
 
-  // When popup clicked, reset Ditto
-  popup.addEventListener('click', () => {
-    ditto.style.top = startTop + 'px';
-    ditto.style.left = startLeft + 'px';
-    ditto.style.transform = 'rotate(0deg)';
-    document.body.removeChild(popup);
-  });
-});
-</script>
+      let top = startTop;
+      let velocity = 0;
+      const gravity = 0.5;
+      const bounceFactor = 0.6;
+      let angle = 0;
+      let swingSpeed = 0.1;
+      let swingDirection = 1;
+
+      // Popup
+      const popup = document.createElement('div');
+      popup.textContent = "Hey! Look what you did :( Put him back!!";
+      Object.assign(popup.style, {
+        position: 'fixed',
+        top: '35%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#FFCB77',
+        border: '4px solid #FE6D73',
+        padding: '20px',
+        fontFamily: '"Courier New", monospace',
+        fontSize: '20px',
+        textAlign: 'center',
+        cursor: 'pointer',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
+        zIndex: 9999
+      });
+      document.body.appendChild(popup);
+
+      function fallAndBounce() {
+        const floor = window.innerHeight - ditto.offsetHeight - 20;
+        velocity += gravity;
+        top += velocity;
+
+        if (top >= floor) {
+          top = floor;
+          velocity *= -bounceFactor;
+        }
+
+        angle += swingSpeed * swingDirection;
+        if (angle > 15 || angle < -15) swingDirection *= -1;
+
+        ditto.style.top = top + 'px';
+        ditto.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+
+        if (Math.abs(velocity) > 0.5 || top < floor) {
+          requestAnimationFrame(fallAndBounce);
+        } else {
+          ditto.style.top = floor + 'px';
+          ditto.style.transform = 'translateX(-50%) rotate(0deg)';
+          ditto.classList.remove('falling');
+        }
+      }
+
+      fallAndBounce();
+
+      popup.addEventListener('click', () => {
+        ditto.style.top = startTop + 'px';
+        ditto.style.left = startLeft + 'px';
+        ditto.style.transform = 'translateX(-50%) rotate(0deg)';
+        ditto.classList.remove('falling');
+        document.body.removeChild(popup);
+      });
+    });
+  </script>
 </body>
 </html>
