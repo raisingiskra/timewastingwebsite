@@ -6,19 +6,118 @@
 <title>Ditto's Smoothie Maker</title>
 <link rel="icon" type="image/x-icon" href="favicon.png">
 <style>
-  body { font-family: "Courier New", monospace; background: #264653; color: #FFF; text-align:center; padding:20px; overflow-x:hidden; }
-  #ingredients { position: relative; height: 350px; margin-bottom: 20px; }
-  .ingredient { position: absolute; padding:10px 20px; background:#FFCB77; border:2px solid #FE6D73; border-radius:8px; cursor:pointer; user-select:none; transition: transform 0.2s; }
-  #blendButton { padding:10px 30px; font-size:20px; background:#17C3B2; border:none; border-radius:10px; cursor:pointer; }
-  #result { margin-top:30px; font-size:22px; }
-  #ditto { width:100px; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); transition: transform 0.2s; }
+  /* Palette */
+  :root {
+    --border1: #17C3B2;
+    --border2: #F4A261;
+    --border3: #FE6D73;
+    --div-color: #FFCB77;
+    --bg-color: #264653;
+  }
+
+  body {
+    font-family: "Courier New", monospace;
+    background-color: var(--bg-color);
+    color: #FFF;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--div-color);
+    border: 6px solid var(--border3);
+    margin: 0;
+  }
+
+  #ingredientsRow {
+    position: fixed;
+    bottom: 100px; /* sits above Ditto */
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 5px 0;
+    gap: 5px;
+    overflow-x: auto;
+    white-space: nowrap;
+    z-index: 1000;
+    background-color: var(--bg-color);
+    border-top: 4px solid var(--border2);
+    border-bottom: 4px solid var(--border2);
+  }
+
+  #ingredientsRow button {
+    background: var(--div-color);
+    border: 2px solid var(--border3);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: "Courier New", monospace;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    color: #000;
+  }
+
+  #ingredientsRow button:hover {
+    transform: scale(1.1);
+    background: var(--border2);
+  }
+
+  #blendButton {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 30px;
+    font-size: 20px;
+    background: var(--border1);
+    border: 2px solid var(--border3);
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 1000;
+    color: #000;
+  }
+
+  #blendButton:hover {
+    background: var(--border2);
+  }
+
+  #result {
+    margin-top: 30px;
+    font-size: 22px;
+    text-align: center;
+  }
+
+  #ditto {
+    width: 100px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: transform 0.2s;
+    z-index: 999;
+  }
+
+  .flyingIngredient {
+    position: absolute;
+    padding: 10px 20px;
+    background: var(--div-color);
+    border: 2px solid var(--border3);
+    border-radius: 8px;
+    font-family: "Courier New", monospace;
+    color: #000;
+    pointer-events: none;
+    z-index: 998;
+  }
 </style>
 </head>
 <body>
 <h1>🍹 Ditto's Smoothie Maker 🍹</h1>
-<p>Click ingredients to toss them in, then hit Blend! Chaos, yummy, and normal points will decide Ditto’s reaction!</p>
 
-<div id="ingredients"></div>
+<div id="ingredientsRow"></div>
 <button id="blendButton">Blend it! 🌀</button>
 <div id="result"></div>
 <img id="ditto" src="https://img.pokemondb.net/sprites/sword-shield/normal/ditto.png" alt="Ditto">
@@ -66,30 +165,43 @@ const ingredientList = [
   {name:"sock", chaos:5, yummy:0, normal:0}
 ];
 
-const ingredientsDiv = document.getElementById('ingredients');
-const resultDiv = document.getElementById('result');
+const ingredientsRow = document.getElementById('ingredientsRow');
 const blendButton = document.getElementById('blendButton');
+const resultDiv = document.getElementById('result');
 const dittoImg = document.getElementById('ditto');
 
 let selectedIngredients = [];
 
+// Create buttons in fixed row
 ingredientList.forEach(item => {
-  const div = document.createElement('div');
-  div.className = 'ingredient';
-  div.textContent = item.name;
-  div.style.left = Math.random()*80+'vw';
-  div.style.top = Math.random()*250+'px';
-  ingredientsDiv.appendChild(div);
+  const btn = document.createElement('button');
+  btn.textContent = item.name;
+  ingredientsRow.appendChild(btn);
 
-  div.addEventListener('click', () => {
+  btn.addEventListener('click', () => {
     selectedIngredients.push(item);
-    div.style.transition = 'all 1s ease-in';
-    div.style.left='50%';
-    div.style.top='300px';
-    div.style.transform='translateX(-50%) scale(0.5)';
+
+    // Create flying div animation
+    const flyDiv = document.createElement('div');
+    flyDiv.className = 'flyingIngredient';
+    flyDiv.textContent = item.name;
+    const rect = btn.getBoundingClientRect();
+    flyDiv.style.left = rect.left + 'px';
+    flyDiv.style.top = rect.top + 'px';
+    document.body.appendChild(flyDiv);
+
+    setTimeout(()=>{
+      flyDiv.style.transition = 'all 1s ease-in';
+      flyDiv.style.left = '50%';
+      flyDiv.style.top = '300px';
+      flyDiv.style.transform = 'translateX(-50%) scale(0.5)';
+    }, 50);
+
+    setTimeout(()=>document.body.removeChild(flyDiv), 1200);
   });
 });
 
+// Blend button logic
 blendButton.addEventListener('click', () => {
   if(selectedIngredients.length===0){
     resultDiv.textContent="Ditto says: Pick something first! 😅";
@@ -117,14 +229,6 @@ blendButton.addEventListener('click', () => {
     resultDiv.innerHTML=`✨ Your smoothie: ${smoothie} ✨<br>${message}<br>💥 Chaos:${chaos}, 🍴 Yummy:${yummy}, 🍓 Normal:${normal}`;
 
     dittoImg.style.transform='translateX(-50%) rotate(0deg)';
-
-    const allIngredients=document.querySelectorAll('.ingredient');
-    allIngredients.forEach(div=>{
-      div.style.transition='all 0.5s';
-      div.style.left=Math.random()*80+'vw';
-      div.style.top=Math.random()*250+'px';
-      div.style.transform='translateX(0) scale(1)';
-    });
 
     selectedIngredients=[];
   },1000);
