@@ -97,13 +97,16 @@
     bottom: 300px;              /* higher on screen */
     left: 50%;
     z-index: 2000;              /* top star */
+}
+
+  #ditto.blending {
     animation-name: spinDitto;
     animation-duration: 2s;      /* one full spin takes 2 seconds */
     animation-iteration-count: 5; /* spins 5 times */
     animation-timing-function: linear;
-}
+  }
 
-@keyframes spinDitto {
+  @keyframes spinDitto {
   0%   { transform: translateX(-50%) rotate(0deg); }
   100% { transform: translateX(-50%) rotate(360deg); }
 }
