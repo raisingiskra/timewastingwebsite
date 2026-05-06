@@ -14,17 +14,20 @@
     }
 
     #ditto-container {
-      margin: 40px 0;
+      margin: 40px auto;
+      width: 256px;  /* bigger container */
+      height: 256px;
     }
 
     #ditto {
-      width: 128px;
-      height: 128px;
+      width: 100%;
+      height: auto;
     }
 
     button {
-      font-size: 18px;
-      padding: 10px 20px;
+      font-family: "Courier New", monospace;
+      font-size: 20px;
+      padding: 12px 24px;
       margin: 10px;
       background-color: #17C3B2;
       color: #264653;
@@ -78,7 +81,7 @@
 
     const dittoImg = document.getElementById('ditto');
     let frameToggle = false; // For eating animation
-    let currentDuplicateFrame = 0;
+
     const duplicateFrames = ['duplicate1.png', 'duplicate2.png', 'duplicate3.png'];
 
     function updateDittoSprite() {
@@ -90,9 +93,8 @@
         dittoImg.src = 'happy.png';
       } else if (dittoState.mood === "sad") {
         dittoImg.src = 'sad.png';
-      } else if (dittoState.mood === "duplicate") {
-        dittoImg.src = duplicateFrames[currentDuplicateFrame];
-      }
+      } 
+      // duplicate handled in playDuplicateAnimation
     }
 
     // ---------- Player Actions ----------
@@ -100,25 +102,31 @@
       dittoState.hunger = Math.min(100, dittoState.hunger + 30);
       dittoState.mood = "eating";
       frameToggle = true;
+      updateDittoSprite();
     });
 
     document.getElementById('play-btn').addEventListener('click', () => {
       dittoState.playfulness = Math.min(100, dittoState.playfulness + 30);
       dittoState.mood = "happy";
+      updateDittoSprite();
     });
 
-    document.getElementById('duplicate-btn').addEventListener('click', () => {
+    document.getElementById('duplicate-btn').addEventListener('click', playDuplicateAnimation);
+
+    // ---------- Duplication Animation ----------
+    function playDuplicateAnimation() {
       dittoState.mood = "duplicate";
-      currentDuplicateFrame = 0;
-      let dupInterval = setInterval(() => {
-        currentDuplicateFrame++;
-        if (currentDuplicateFrame >= duplicateFrames.length) {
-          clearInterval(dupInterval);
+      let frame = 0;
+      const interval = setInterval(() => {
+        dittoImg.src = duplicateFrames[frame];
+        frame++;
+        if (frame >= duplicateFrames.length) {
+          clearInterval(interval);
           dittoState.mood = "neutral";
-          currentDuplicateFrame = 0;
+          updateDittoSprite();
         }
-      }, 500);
-    });
+      }, 500); // 500ms per frame
+    }
 
     // ---------- Notifications ----------
     function notify(message) {
@@ -143,12 +151,12 @@
         if (dittoState.playfulness < 30) notify("Ditto is bored! Play with him!");
       } else if (dittoState.mood === "eating" || dittoState.mood === "happy") {
         // keep mood
-      } else {
+      } else if (dittoState.mood !== "duplicate") {
         dittoState.mood = "neutral";
       }
 
       dittoState.lastInteraction = now;
-      updateDittoSprite();
+      if (dittoState.mood !== "duplicate") updateDittoSprite();
     }
 
     // ---------- Main Loop ----------
