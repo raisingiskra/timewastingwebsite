@@ -70,104 +70,146 @@
     <button id="duplicate-btn">Duplicate ✨</button>
   </div>
 
-  <script>
-    /* ---------- Internal JS ---------- */
-    let dittoState = {
-      mood: "neutral",       // "neutral", "eating", "happy", "sad", "duplicate"
-      hunger: 100,           // 0–100
-      playfulness: 100,      // 0–100
-      lastInteraction: Date.now()
-    };
+<script>
+/* ---------- Internal JS ---------- */
+let dittoState = {
+  mood: "neutral",       // "neutral", "eating", "happy", "sad", "duplicate"
+  hunger: 100,           // 0–100
+  playfulness: 100,      // 0–100
+  lastInteraction: Date.now()
+};
 
-    const dittoImg = document.getElementById('ditto');
-    let frameToggle = false; // For eating animation
+const dittoImg = document.getElementById('ditto');
+let frameToggle = false; // For eating animation
 
-    const duplicateFrames = ['duplicate1.png', 'duplicate2.png', 'duplicate3.png'];
+// Duplication frames
+const duplicateFrames = ['duplicate1.png', 'duplicate2.png', 'duplicate3.png'];
 
-    function updateDittoSprite() {
-      if (dittoState.mood === "neutral") {
-        dittoImg.src = 'neutral.png';
-      } else if (dittoState.mood === "eating") {
-        dittoImg.src = frameToggle ? 'mouth_open.png' : 'mouth_closed.png';
-      } else if (dittoState.mood === "happy") {
-        dittoImg.src = 'happy.png';
-      } else if (dittoState.mood === "sad") {
-        dittoImg.src = 'sad.png';
-      } 
-      // duplicate handled in playDuplicateAnimation
-    }
+// ---------- Random Ditto Messages ----------
+const dittoMessages = [
+  "I feel like being a lamp post :3",
+  "I have infinite outfit combos :D",
+  "Did you know I can copy a cloud :O",
+  "Sometimes I pretend to be a pencil :/",
+  "I could be a sandwich if I wanted :3",
+  "I wonder what color your socks are :D",
+  "I am thinking in circles today :/",
+  "Do you ever feel like a pancake :O",
+  "I just invented invisible spaghetti :3",
+  "I might nap in your keyboard later :D",
+  "I am now a certified sock inspector :3",
+  "If I stare at the ceiling long enough, I gain wisdom :/",
+  "I could be your roommate but I don’t pay rent :D",
+  "I am secretly plotting a jelly revolution :3",
+  "I think I am part coffee mug today :O",
+  "Sometimes I turn into a shadow of a sandwich :/",
+  "I like to smell pixels sometimes :3",
+  "I am learning to moonwalk on the screen :D",
+  "I will judge your handwriting silently :/",
+  "Sometimes I pretend your mouse is a tiny dragon :3",
+  "I might become a lamp again :D",
+  "I just tried to hug your screen :3",
+  "I wonder if pixels taste funny :/",
+  "I am 73% banana today :D",
+  "Do clouds ever get bored? :3",
+  "I am thinking about becoming a pancake :/",
+  "I might nap in your coffee cup later :D"
+  "Does jello taste like rocks? :/"
+  "Can I eat your Pokéball.. please? :3"
+  "Sometimes I transfrom into pudding and take a bite of myself.. hehe :D"
+];
 
-    // ---------- Player Actions ----------
-    document.getElementById('feed-btn').addEventListener('click', () => {
-      dittoState.hunger = Math.min(100, dittoState.hunger + 30);
-      dittoState.mood = "eating";
-      frameToggle = true;
+// ---------- Helper Functions ----------
+function updateDittoSprite() {
+  if (dittoState.mood === "neutral") {
+    dittoImg.src = 'neutral.png';
+  } else if (dittoState.mood === "eating") {
+    dittoImg.src = frameToggle ? 'mouth_open.png' : 'mouth_closed.png';
+  } else if (dittoState.mood === "happy") {
+    dittoImg.src = 'happy.png';
+  } else if (dittoState.mood === "sad") {
+    dittoImg.src = 'sad.png';
+  } 
+  // duplication handled in playDuplicateAnimation
+}
+
+function notify(message) {
+  const popup = document.createElement('div');
+  popup.textContent = message;
+  popup.classList.add('notification');
+  document.body.appendChild(popup);
+  setTimeout(() => document.body.removeChild(popup), 3000);
+}
+
+// ---------- Player Actions ----------
+document.getElementById('feed-btn').addEventListener('click', () => {
+  dittoState.hunger = Math.min(100, dittoState.hunger + 30);
+  dittoState.mood = "eating";
+  frameToggle = true;
+  updateDittoSprite();
+});
+
+document.getElementById('play-btn').addEventListener('click', () => {
+  dittoState.playfulness = Math.min(100, dittoState.playfulness + 30);
+  dittoState.mood = "happy";
+  updateDittoSprite();
+});
+
+document.getElementById('duplicate-btn').addEventListener('click', playDuplicateAnimation);
+
+// ---------- Duplication Animation ----------
+function playDuplicateAnimation() {
+  dittoState.mood = "duplicate";
+  let frame = 0;
+  const interval = setInterval(() => {
+    dittoImg.src = duplicateFrames[frame];
+    frame++;
+    if (frame >= duplicateFrames.length) {
+      clearInterval(interval);
+      dittoState.mood = "neutral";
       updateDittoSprite();
-    });
-
-    document.getElementById('play-btn').addEventListener('click', () => {
-      dittoState.playfulness = Math.min(100, dittoState.playfulness + 30);
-      dittoState.mood = "happy";
-      updateDittoSprite();
-    });
-
-    document.getElementById('duplicate-btn').addEventListener('click', playDuplicateAnimation);
-
-    // ---------- Duplication Animation ----------
-    function playDuplicateAnimation() {
-      dittoState.mood = "duplicate";
-      let frame = 0;
-      const interval = setInterval(() => {
-        dittoImg.src = duplicateFrames[frame];
-        frame++;
-        if (frame >= duplicateFrames.length) {
-          clearInterval(interval);
-          dittoState.mood = "neutral";
-          updateDittoSprite();
-        }
-      }, 500); // 500ms per frame
     }
+  }, 500); // 500ms per frame
+}
 
-    // ---------- Notifications ----------
-    function notify(message) {
-      const popup = document.createElement('div');
-      popup.textContent = message;
-      popup.classList.add('notification');
-      document.body.appendChild(popup);
-      setTimeout(() => document.body.removeChild(popup), 3000);
-    }
+// ---------- Stat Decay ----------
+function decayStats() {
+  const now = Date.now();
+  const delta = (now - dittoState.lastInteraction) / 1000; // seconds
 
-    // ---------- Stat Decay ----------
-    function decayStats() {
-      const now = Date.now();
-      const delta = (now - dittoState.lastInteraction) / 1000; // seconds
+  dittoState.hunger = Math.max(0, dittoState.hunger - delta * 0.02);
+  dittoState.playfulness = Math.max(0, dittoState.playfulness - delta * 0.01);
 
-      dittoState.hunger = Math.max(0, dittoState.hunger - delta * 0.02);
-      dittoState.playfulness = Math.max(0, dittoState.playfulness - delta * 0.01);
+  if (dittoState.hunger < 30 || dittoState.playfulness < 30) {
+    dittoState.mood = "sad";
+    if (dittoState.hunger < 30) notify("Ditto is hungry! Feed him! :(");
+    if (dittoState.playfulness < 30) notify("Ditto is bored! Play with him! :/");
+  } else if (dittoState.mood !== "eating" && dittoState.mood !== "happy" && dittoState.mood !== "duplicate") {
+    dittoState.mood = "neutral";
+  }
 
-      if (dittoState.hunger < 30 || dittoState.playfulness < 30) {
-        dittoState.mood = "sad";
-        if (dittoState.hunger < 30) notify("Ditto is hungry! Feed him!");
-        if (dittoState.playfulness < 30) notify("Ditto is bored! Play with him!");
-      } else if (dittoState.mood === "eating" || dittoState.mood === "happy") {
-        // keep mood
-      } else if (dittoState.mood !== "duplicate") {
-        dittoState.mood = "neutral";
-      }
+  dittoState.lastInteraction = now;
 
-      dittoState.lastInteraction = now;
-      if (dittoState.mood !== "duplicate") updateDittoSprite();
-    }
+  if (dittoState.mood !== "duplicate") updateDittoSprite();
+}
 
-    // ---------- Main Loop ----------
-    setInterval(() => {
-      frameToggle = !frameToggle;
-      decayStats();
-    }, 500);
+// ---------- Random Ditto Messages Loop ----------
+setInterval(() => {
+  if (Math.random() < 0.3) { // 30% chance every 10 seconds
+    const msg = dittoMessages[Math.floor(Math.random() * dittoMessages.length)];
+    notify(msg);
+  }
+}, 10000);
 
-    // Initial render
-    updateDittoSprite();
-  </script>
+// ---------- Main Loop ----------
+setInterval(() => {
+  frameToggle = !frameToggle;
+  decayStats();
+}, 500);
+
+// Initial render
+updateDittoSprite();
+</script>
 
 </body>
 </html>
