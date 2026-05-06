@@ -34,7 +34,7 @@
 
   #ingredientsRow {
     position: fixed;
-    bottom: 100px; /* sits above Ditto */
+    bottom: 100px; /* above Ditto */
     left: 0;
     width: 100%;
     display: flex;
@@ -68,7 +68,7 @@
 
   #blendButton {
     position: fixed;
-    bottom: 20px;
+    bottom: 60px; /* slightly above buttons row */
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 30px;
@@ -92,13 +92,26 @@
   }
 
   #ditto {
-    width: 100px;
+    width: 150px;
     position: fixed;
-    bottom: 20px;
+    bottom: 160px; /* above buttons row */
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2000; /* Ditto is the star! */
     transition: transform 0.2s;
-    z-index: 999;
+  }
+
+  /* Ditto blend animation */
+  @keyframes dittoBlend {
+    0% { transform: translateX(-50%) rotate(-10deg) scale(1); }
+    25% { transform: translateX(-50%) rotate(10deg) scale(1.1); }
+    50% { transform: translateX(-50%) rotate(-10deg) scale(1); }
+    75% { transform: translateX(-50%) rotate(10deg) scale(1.1); }
+    100% { transform: translateX(-50%) rotate(0deg) scale(1); }
+  }
+
+  #ditto.blending {
+    animation: dittoBlend 1s ease-in-out;
   }
 
   .flyingIngredient {
@@ -110,7 +123,7 @@
     font-family: "Courier New", monospace;
     color: #000;
     pointer-events: none;
-    z-index: 998;
+    z-index: 1999;
   }
 </style>
 </head>
@@ -181,7 +194,7 @@ ingredientList.forEach(item => {
   btn.addEventListener('click', () => {
     selectedIngredients.push(item);
 
-    // Create flying div animation
+    // Fly to Ditto
     const flyDiv = document.createElement('div');
     flyDiv.className = 'flyingIngredient';
     flyDiv.textContent = item.name;
@@ -190,27 +203,31 @@ ingredientList.forEach(item => {
     flyDiv.style.top = rect.top + 'px';
     document.body.appendChild(flyDiv);
 
-    setTimeout(()=>{
+    setTimeout(() => {
+      const dittoRect = dittoImg.getBoundingClientRect();
       flyDiv.style.transition = 'all 1s ease-in';
-      flyDiv.style.left = '50%';
-      flyDiv.style.top = '300px';
+      flyDiv.style.left = dittoRect.left + dittoRect.width/2 + 'px';
+      flyDiv.style.top = dittoRect.top + dittoRect.height/2 + 'px';
       flyDiv.style.transform = 'translateX(-50%) scale(0.5)';
     }, 50);
 
-    setTimeout(()=>document.body.removeChild(flyDiv), 1200);
+    setTimeout(() => document.body.removeChild(flyDiv), 1200);
   });
 });
 
-// Blend button logic
+// Blend button
 blendButton.addEventListener('click', () => {
   if(selectedIngredients.length===0){
     resultDiv.textContent="Ditto says: Pick something first! 😅";
     return;
   }
 
-  dittoImg.style.transform='translateX(-50%) rotate(720deg)';
+  dittoImg.classList.add('blending');
 
   setTimeout(()=>{
+    dittoImg.classList.remove('blending');
+
+    // Chaos/Yummy/Normal scoring
     let chaos=0, yummy=0, normal=0;
     selectedIngredients.forEach(i=>{ chaos+=i.chaos; yummy+=i.yummy; normal+=i.normal; });
 
@@ -228,10 +245,8 @@ blendButton.addEventListener('click', () => {
     const smoothie = selectedIngredients.map(i=>i.name).join(" + ");
     resultDiv.innerHTML=`✨ Your smoothie: ${smoothie} ✨<br>${message}<br>💥 Chaos:${chaos}, 🍴 Yummy:${yummy}, 🍓 Normal:${normal}`;
 
-    dittoImg.style.transform='translateX(-50%) rotate(0deg)';
-
     selectedIngredients=[];
-  },1000);
+  },1200);
 });
 </script>
 </body>
