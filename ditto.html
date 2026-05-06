@@ -204,11 +204,11 @@ function decayStats() {
 
 // ---------- Random Ditto Messages Loop ----------
 setInterval(() => {
-  if (Math.random() < 0.7) { // 70% chance every 10 seconds
+  if (Math.random() < 1) { // 100% chance every 10 seconds
     const msg = dittoMessages[Math.floor(Math.random() * dittoMessages.length)];
     notify(msg);
   }
-}, 5000);
+}, 3000);
 
 // ---------- Main Loop ----------
 setInterval(() => {
