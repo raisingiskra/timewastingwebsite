@@ -34,7 +34,7 @@
 
   #ingredientsRow {
     position: fixed;
-    bottom: 100px; /* above Ditto */
+    bottom: 100px;
     left: 0;
     width: 100%;
     display: flex;
@@ -68,7 +68,7 @@
 
   #blendButton {
     position: fixed;
-    bottom: 60px; /* slightly above buttons row */
+    bottom: 60px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 30px;
@@ -92,26 +92,26 @@
   }
 
   #ditto {
-    width: 150px;
+    width: 200px;               /* bigger */
     position: fixed;
-    bottom: 160px; /* above buttons row */
+    bottom: 200px;              /* higher */
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2000; /* Ditto is the star! */
-    transition: transform 0.2s;
+    z-index: 2000;              /* Ditto is top star */
+    transition: transform 0.3s;
   }
 
-  /* Ditto blend animation */
+  /* Aggressive spin while blending */
   @keyframes dittoBlend {
-    0% { transform: translateX(-50%) rotate(-10deg) scale(1); }
-    25% { transform: translateX(-50%) rotate(10deg) scale(1.1); }
-    50% { transform: translateX(-50%) rotate(-10deg) scale(1); }
-    75% { transform: translateX(-50%) rotate(10deg) scale(1.1); }
-    100% { transform: translateX(-50%) rotate(0deg) scale(1); }
+    0% { transform: translateX(-50%) rotate(0deg) scale(1); }
+    25% { transform: translateX(-50%) rotate(180deg) scale(1.2); }
+    50% { transform: translateX(-50%) rotate(360deg) scale(1.1); }
+    75% { transform: translateX(-50%) rotate(540deg) scale(1.2); }
+    100% { transform: translateX(-50%) rotate(720deg) scale(1); }
   }
 
   #ditto.blending {
-    animation: dittoBlend 1s ease-in-out;
+    animation: dittoBlend 3s ease-in-out; /* slower dramatic spin */
   }
 
   .flyingIngredient {
@@ -205,13 +205,13 @@ ingredientList.forEach(item => {
 
     setTimeout(() => {
       const dittoRect = dittoImg.getBoundingClientRect();
-      flyDiv.style.transition = 'all 1s ease-in';
+      flyDiv.style.transition = 'all 1.5s ease-in';
       flyDiv.style.left = dittoRect.left + dittoRect.width/2 + 'px';
       flyDiv.style.top = dittoRect.top + dittoRect.height/2 + 'px';
       flyDiv.style.transform = 'translateX(-50%) scale(0.5)';
     }, 50);
 
-    setTimeout(() => document.body.removeChild(flyDiv), 1200);
+    setTimeout(() => document.body.removeChild(flyDiv), 1600);
   });
 });
 
@@ -227,7 +227,6 @@ blendButton.addEventListener('click', () => {
   setTimeout(()=>{
     dittoImg.classList.remove('blending');
 
-    // Chaos/Yummy/Normal scoring
     let chaos=0, yummy=0, normal=0;
     selectedIngredients.forEach(i=>{ chaos+=i.chaos; yummy+=i.yummy; normal+=i.normal; });
 
@@ -246,7 +245,7 @@ blendButton.addEventListener('click', () => {
     resultDiv.innerHTML=`✨ Your smoothie: ${smoothie} ✨<br>${message}<br>💥 Chaos:${chaos}, 🍴 Yummy:${yummy}, 🍓 Normal:${normal}`;
 
     selectedIngredients=[];
-  },1200);
+  },3000);  // match the aggressive spin duration
 });
 </script>
 </body>
