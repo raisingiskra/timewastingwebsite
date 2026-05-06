@@ -1,6 +1,0 @@
-Color palette:
-#227C9D (cyan) <border 2>
-#17C3B2 (turquoise) <border 1>
-#FFCB77 (warm yellow) <Div color>
-#FEF9EF (beige) <Background color>
-#FE6D73 (red/pink) <border 3>
