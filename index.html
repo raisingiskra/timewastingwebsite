@@ -44,19 +44,56 @@
       z-index: 10;
     }
 
-    .dittogame {
-      position: sticky;
-      top: 350px;
-      border: 6px double var(--border3);
-      background-color: var(--div-color);
-      text-align: center;
-      padding: 10px;
-    }
-
     .purple {
       text-decoration: none;
       color: inherit;
     }
+    /* Existing dittogame styles */
+.dittogame {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border: 6px double var(--border3);
+  background-color: var(--div-color);
+  padding: 20px;
+  gap: 20px; /* space between blender and links */
+  flex-wrap: wrap; /* allow items to wrap on small screens */
+}
+
+.dittogame img.blender {
+  max-width: 150px;
+  height: auto;
+  flex-shrink: 0; /* keep image from shrinking too much */
+}
+
+.dittogame .links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 18px;
+}
+
+.dittogame .links p {
+  margin: 10px 0; /* spacing for the "Or" */
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 500px) {
+  .dittogame {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .dittogame .links {
+    align-items: center;
+  }
+
+  .dittogame img.blender {
+    margin-bottom: 15px; /* space below blender when stacked */
+  }
+}
+
   </style>
 </head>
 <body>
@@ -72,10 +109,14 @@
     <p class="warning">⚠️ Warning: Keep a clock with you at all times. Too many fun time wasting things here. ⚠️</p>
   </header>
 
-  <div class="dittogame">
-    <img src="blender.png">
-    <a class="purple" href="ditto.html">💜Take care of your very own pet Ditto!✨</a> <p>Or</p> <a class="purple" href="smoothie.html">🍓Make a yummy smoothie with anything!💗</a>
+<div class="dittogame">
+  <img src="blender.png" class="blender">
+  <div class="links">
+    <a class="purple" href="ditto.html">💜Take care of your very own pet Ditto!✨</a>
+    <p>Or</p>
+    <a class="purple" href="smoothie.html">🍓Make a yummy smoothie with anything!💗</a>
   </div>
+</div>
 
   <script>
     const ditto = document.querySelector('.ditto');
